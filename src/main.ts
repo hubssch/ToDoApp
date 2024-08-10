@@ -1,5 +1,5 @@
 import './style.css';
-import { CRUD } from './Class/CRUD';
+import { ProjectCRUD } from './Class/ProjectCRUD';
 
 // Dodajemy zawartość do #app
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const projectsContainerId = 'projects-container';
 
   // Inicjalizacja klasy CRUD
-  const crud = new CRUD(projectsContainerId);
+  const projectCRUD = new ProjectCRUD(projectsContainerId);
 
   if (newProjectButton) {
     // Funkcja do dodania nowego projektu
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             description: projectDescription
           };
 
-          crud.addNewProject(newProject);
+          projectCRUD.addNewProject(newProject);
 
           projectInput.value = ''; // Czyścimy input po dodaniu projektu
           projectDescriptionInput.value = ''; // Czyścimy opis po dodaniu projektu
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Wczytanie projektów z localStorage na początku
-    crud.loadProjects();
+    projectCRUD.loadProjects();
 
     // Dodanie nasłuchiwania na kliknięcie
     newProjectButton.addEventListener('click', addNewProject);
