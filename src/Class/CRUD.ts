@@ -1,6 +1,12 @@
 // Class/CRUD.ts
 
-export class CRUD {
+export interface Project {
+    id: string;
+    name: string;
+    description: string;
+  }
+  
+  export class CRUD {
     private projectsContainer: HTMLDivElement;
   
     constructor(projectsContainerId: string) {
@@ -8,77 +14,76 @@ export class CRUD {
     }
   
     loadProjects() {
-      const projects = JSON.parse(localStorage.getItem('projects') || '[]') as string[];
-      projects.forEach(projectName => {
-        const project = this.createProjectElement(projectName);
-        this.projectsContainer.appendChild(project);
+      const projects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
+      projects.forEach(project => {
+        const projectElement = this.createProjectElement(project);
+        this.projectsContainer.appendChild(projectElement);
       });
     }
   
-    addNewProject(projectName: string) {
-      if (projectName) {
-        const project = this.createProjectElement(projectName);
-        this.projectsContainer.appendChild(project);
+    addNewProject(project: Project) {
+      const projectElement = this.createProjectElement(project);
+      this.projectsContainer.appendChild(projectElement);
   
-        const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as string[];
-        existingProjects.push(projectName);
-        localStorage.setItem('projects', JSON.stringify(existingProjects));
+      const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
+      existingProjects.push(project);
+      localStorage.setItem('projects', JSON.stringify(existingProjects));
   
-        console.log(`New Project added: ${projectName}`);
-      } else {
-        console.log('Project name is empty, cannot add project.');
-      }
+      console.log(`New Project added: ${project.name}`);
     }
   
-    private createProjectElement(projectName: string): HTMLDivElement {
-      const project = document.createElement('div') as HTMLDivElement;
-      project.classList.add('project');
-      project.textContent = projectName;
+    private createProjectElement(project: Project): HTMLDivElement {
+      const projectElement = document.createElement('div') as HTMLDivElement;
+      projectElement.classList.add('project');
+      projectElement.textContent = `${project.name}: ${project.description}`;
   
-      this.createEditButton(project, projectName);
-      this.createDeleteButton(project, projectName);
+      this.createEditButton(projectElement, project);
+      this.createDeleteButton(projectElement, project);
   
-      return project;
+      return projectElement;
     }
   
-    private deleteProject(projectElement: HTMLDivElement, projectName: string) {
-      const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as string[];
-      const updatedProjects = existingProjects.filter(project => project !== projectName);
+    private deleteProject(projectElement: HTMLDivElement, projectId: string) {
+      const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
+      const updatedProjects = existingProjects.filter(project => project.id !== projectId);
       localStorage.setItem('projects', JSON.stringify(updatedProjects));
   
       projectElement.remove();
-      console.log(`Project deleted: ${projectName}`);
+      console.log(`Project deleted: ${projectId}`);
     }
   
-    private createDeleteButton(projectElement: HTMLDivElement, projectName: string) {
+    private createDeleteButton(projectElement: HTMLDivElement, project: Project) {
       const deleteButton = document.createElement('button') as HTMLButtonElement;
       deleteButton.classList.add('delete-btn');
       deleteButton.textContent = 'Delete';
   
-      deleteButton.addEventListener('click', () => this.deleteProject(projectElement, projectName));
+      deleteButton.addEventListener('click', () => this.deleteProject(projectElement, project.id));
       projectElement.appendChild(deleteButton);
     }
   
-    private createEditButton(projectElement: HTMLDivElement, projectName: string) {
+    private createEditButton(projectElement: HTMLDivElement, project: Project) {
       const editButton = document.createElement('button') as HTMLButtonElement;
       editButton.classList.add('edit-btn');
       editButton.textContent = 'Edit';
   
-      editButton.addEventListener('click', () => this.editProject(projectElement, projectName, editButton));
+      editButton.addEventListener('click', () => this.editProject(projectElement, project, editButton));
       projectElement.appendChild(editButton);
     }
   
-    private editProject(projectElement: HTMLDivElement, projectName: string, editButton: HTMLButtonElement) {
-      const newProjectName = prompt('Edit project name:', projectName);
-      if (newProjectName && newProjectName.trim()) {
-        projectElement.textContent = newProjectName.trim();
+    private editProject(projectElement: HTMLDivElement, project: Project, editButton: HTMLButtonElement) {
+      const newProjectName = prompt('Edit project name:', project.name);
+      const newProjectDescription = prompt('Edit project description:', project.description);
+      
+      if (newProjectName && newProjectName.trim() && newProjectDescription && newProjectDescription.trim()) {
+        projectElement.textContent = `${newProjectName.trim()}: ${newProjectDescription.trim()}`;
         projectElement.appendChild(editButton);
-        this.createDeleteButton(projectElement, newProjectName.trim());
+        this.createDeleteButton(projectElement, { ...project, name: newProjectName.trim(), description: newProjectDescription.trim() });
   
-        const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as string[];
-        const projectIndex = existingProjects.indexOf(projectName);
+        const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
+        const projectIndex = existingProjects.findIndex(p => p.id === project.id);
         if (projectIndex > -1) {
-          existingProjects[projectIndex] = newProjectName.trim();
+          existingProjects[projectIndex].name = newProjectName.trim();
+          existingProjects[projectIndex].description = newProjectDescription.trim();
           localStorage.setItem('projects', JSON.stringify(existingProjects));
         }
   

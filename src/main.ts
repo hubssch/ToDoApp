@@ -6,6 +6,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <div id='projects-container'></div>
     <input placeholder='Project Name' id='new-project-input' />
+    <input placeholder='Project Description' id='new-project-description' />
     <button id='new-project-btn'>New Project</button>
   </div>
 `;
@@ -21,11 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Funkcja do dodania nowego projektu
     const addNewProject = () => {
       const projectInput = document.querySelector<HTMLInputElement>('#new-project-input');
+      const projectDescriptionInput = document.querySelector<HTMLInputElement>('#new-project-description');
 
-      if (projectInput) {
+      if (projectInput && projectDescriptionInput) {
         const projectName = projectInput.value.trim();
-        crud.addNewProject(projectName);
-        projectInput.value = ''; // Czyścimy input po dodaniu projektu
+        const projectDescription = projectDescriptionInput.value.trim();
+        
+        if (projectName && projectDescription) {
+          const newProject = {
+            id: crypto.randomUUID(), // Generowanie unikalnego ID
+            name: projectName,
+            description: projectDescription
+          };
+
+          crud.addNewProject(newProject);
+
+          projectInput.value = ''; // Czyścimy input po dodaniu projektu
+          projectDescriptionInput.value = ''; // Czyścimy opis po dodaniu projektu
+        } else {
+          console.log('Project name or description is empty, cannot add project.');
+        }
       }
     };
 
