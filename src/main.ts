@@ -5,6 +5,7 @@ import { ProjectCRUD } from './Class/ProjectCRUD';
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <div id='projects-container'></div>
+    <div id='project-details' style='display: none;'></div> <!-- Sekcja na szczegóły projektu -->
     <input placeholder='Project Name' id='new-project-input' />
     <input placeholder='Project Description' id='new-project-description' />
     <button id='new-project-btn'>New Project</button>

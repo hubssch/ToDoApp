@@ -81,17 +81,24 @@ export class StoryCRUD {
   private editStory(storyElement: HTMLDivElement, story: Story, editButton: HTMLButtonElement) {
     const newStoryName = prompt('Edit story name:', story.name);
     const newStoryDescription = prompt('Edit story description:', story.description);
+    const newStoryPriority = prompt('Edit story priority (Low, Medium, High):', story.priority);
+    const newStoryStatus = prompt('Edit story status (To do, Doing, Done):', story.status);
 
-    if (newStoryName && newStoryName.trim() && newStoryDescription && newStoryDescription.trim()) {
-      storyElement.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${story.priority}, Status: ${story.status})`;
+    if (newStoryName && newStoryName.trim() && newStoryDescription && newStoryDescription.trim() &&
+      newStoryPriority && ['Low', 'Medium', 'High'].includes(newStoryPriority) &&
+      newStoryStatus && ['To do', 'Doing', 'Done'].includes(newStoryStatus)) {
+        
+      storyElement.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus})`;
       storyElement.appendChild(editButton);
-      this.createDeleteButton(storyElement, { ...story, name: newStoryName.trim(), description: newStoryDescription.trim() });
+      this.createDeleteButton(storyElement, { ...story, name: newStoryName.trim(), description: newStoryDescription.trim(), priority: newStoryPriority as 'Low' | 'Medium' | 'High', status: newStoryStatus as 'To do' | 'Doing' | 'Done' });
 
       const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
       const storyIndex = existingStories.findIndex(s => s.id === story.id);
       if (storyIndex > -1) {
         existingStories[storyIndex].name = newStoryName.trim();
         existingStories[storyIndex].description = newStoryDescription.trim();
+        existingStories[storyIndex].priority = newStoryPriority as 'Low' | 'Medium' | 'High';
+        existingStories[storyIndex].status = newStoryStatus as 'To do' | 'Doing' | 'Done';
         localStorage.setItem('stories', JSON.stringify(existingStories));
       }
 

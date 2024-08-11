@@ -1,4 +1,4 @@
-// Class/ProjectCRUD.ts
+import { StoryCRUD } from './StoryCRUD';
 
 export interface Project {
   id: string;
@@ -39,8 +39,33 @@ export class ProjectCRUD {
 
     this.createEditButton(projectElement, project);
     this.createDeleteButton(projectElement, project);
+    this.createDetailsButton(projectElement, project);
 
     return projectElement;
+  }
+
+  private createDetailsButton(projectElement: HTMLDivElement, project: Project) {
+    const detailsButton = document.createElement('button') as HTMLButtonElement;
+    detailsButton.classList.add('details-btn');
+    detailsButton.textContent = 'View Details';
+
+    detailsButton.addEventListener('click', () => this.showProjectDetails(project.id));
+    projectElement.appendChild(detailsButton);
+  }
+
+  private showProjectDetails(projectId: string) {
+    const projectsContainer = document.querySelector<HTMLDivElement>('#projects-container');
+    const projectDetails = document.querySelector<HTMLDivElement>('#project-details');
+
+    if (projectsContainer && projectDetails) {
+      projectsContainer.style.display = 'none'; // Ukrywa listę projektów
+      projectDetails.style.display = 'block'; // Pokazuje szczegóły projektu
+      projectDetails.innerHTML = `<h2>Project Details</h2><div id='stories-container'></div>`;
+    }
+
+    const storiesContainerId = 'stories-container';
+    const storyCRUD = new StoryCRUD(storiesContainerId);
+    storyCRUD.loadStories(projectId); // Wczytanie i wyświetlenie historii przypisanych do projektu
   }
 
   private deleteProject(projectElement: HTMLDivElement, projectId: string) {
