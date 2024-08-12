@@ -10,7 +10,7 @@ export interface Story {
     name: string;
     description: string;
   };
-  createDate: string;
+  createDate: string; // Właściwość data utworzenia
 }
 
 export class StoryCRUD {
@@ -20,11 +20,18 @@ export class StoryCRUD {
     this.storiesContainer = document.querySelector<HTMLDivElement>(`#${storiesContainerId}`)!;
   }
 
-  loadStories(projectId: string) {
+  loadStories(projectId: string, statusFilter: string = 'all') {
     const stories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
     const projectStories = stories.filter(story => story.project.id === projectId);
 
-    projectStories.forEach(story => {
+    let filteredStories = projectStories;
+    if (statusFilter !== 'all') {
+      filteredStories = projectStories.filter(story => story.status === statusFilter);
+    }
+
+    this.storiesContainer.innerHTML = ''; // Wyczyść obecnie wyświetlane historie
+
+    filteredStories.forEach(story => {
       const storyElement = this.createStoryElement(story);
       this.storiesContainer.appendChild(storyElement);
     });
@@ -53,7 +60,8 @@ export class StoryCRUD {
       <strong>Description:</strong> ${story.description}<br/>
       <strong>Priority:</strong> ${story.priority}<br/>
       <strong>Status:</strong> ${story.status}<br/>
-      <strong>Owner:</strong> ${story.owner}
+      <strong>Owner:</strong> ${story.owner}<br/>
+      <strong>Create Date:</strong> ${new Date(story.createDate).toLocaleDateString()}<br/>
     `;
 
     // Tworzenie divu na przyciski
@@ -116,7 +124,8 @@ export class StoryCRUD {
         <strong>Description:</strong> ${newStoryDescription.trim()}<br/>
         <strong>Priority:</strong> ${newStoryPriority}<br/>
         <strong>Status:</strong> ${newStoryStatus}<br/>
-        <strong>Owner:</strong> ${newStoryOwner.trim()}
+        <strong>Owner:</strong> ${newStoryOwner.trim()}<br/>
+        <strong>Create Date:</strong> ${new Date(story.createDate).toLocaleDateString()}<br/>
       `;
 
       const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];

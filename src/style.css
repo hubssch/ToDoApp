@@ -82,6 +82,20 @@ html {
   width: 1000px
 }
 
+/* #project-details {
+  border: 1px solid whitesmoke;
+  border-radius: 8px;
+  padding: 10px 10px 10px 10px;
+  margin-top: auto;
+  width: 1000px;
+}
+
+#header {
+  position: absolute;
+  transform: translate(100%, 100%);
+  text-align: center;
+} */
+
 #project-details {
   border: 1px solid whitesmoke;
   border-radius: 8px;
@@ -92,4 +106,6 @@ html {
 
 #header {
   text-align: center;
+  margin-bottom: 20px;
+  /* Dodaj margines poniżej, jeśli chcesz oddzielić nagłówek od reszty zawartości */
 }
