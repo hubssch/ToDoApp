@@ -25,6 +25,7 @@ export class ProjectCRUD {
 
   addNewProject(project: Project) {
     const projectElement = this.createProjectElement(project);
+    projectElement.className = 'project';
     this.projectsContainer.appendChild(projectElement);
 
     const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
@@ -37,22 +38,35 @@ export class ProjectCRUD {
   private createProjectElement(project: Project): HTMLDivElement {
     const projectElement = document.createElement('div') as HTMLDivElement;
     projectElement.classList.add('project');
-    projectElement.textContent = `${project.name}: ${project.description}`;
 
-    this.createEditButton(projectElement, project);
-    this.createDeleteButton(projectElement, project);
-    this.createDetailsButton(projectElement, project);
+    // Wyświetlanie informacji o projekcie w osobnych liniach
+    projectElement.innerHTML = `
+      <strong>Name:</strong> ${project.name}<br/>
+      <strong>Description:</strong> ${project.description}
+    `;
+
+    // Tworzenie kontenera na przyciski
+    const buttonsContainer = document.createElement('div') as HTMLDivElement;
+    buttonsContainer.classList.add('buttons-container');
+
+    // Dodanie przycisków do kontenera
+    this.createEditButton(buttonsContainer, project);
+    this.createDeleteButton(buttonsContainer, project);
+    this.createDetailsButton(buttonsContainer, project);
+
+    // Dodanie kontenera przycisków do elementu projektu
+    projectElement.appendChild(buttonsContainer);
 
     return projectElement;
   }
 
-  private createDetailsButton(projectElement: HTMLDivElement, project: Project) {
+  private createDetailsButton(buttonsContainer: HTMLDivElement, project: Project) {
     const detailsButton = document.createElement('button') as HTMLButtonElement;
     detailsButton.classList.add('details-btn');
     detailsButton.textContent = 'View Details';
 
     detailsButton.addEventListener('click', () => this.showProjectDetails(project.id, project.name));
-    projectElement.appendChild(detailsButton);
+    buttonsContainer.appendChild(detailsButton);
   }
 
   private showProjectDetails(projectId: string, projectName: string) {
@@ -123,32 +137,43 @@ export class ProjectCRUD {
     console.log(`Project deleted: ${projectId}`);
   }
 
-  private createDeleteButton(projectElement: HTMLDivElement, project: Project) {
+  private createDeleteButton(buttonsContainer: HTMLDivElement, project: Project) {
     const deleteButton = document.createElement('button') as HTMLButtonElement;
     deleteButton.classList.add('delete-btn');
     deleteButton.textContent = 'Delete';
 
-    deleteButton.addEventListener('click', () => this.deleteProject(projectElement, project.id));
-    projectElement.appendChild(deleteButton);
+    deleteButton.addEventListener('click', () => this.deleteProject(buttonsContainer.parentElement as HTMLDivElement, project.id));
+    buttonsContainer.appendChild(deleteButton);
   }
 
-  private createEditButton(projectElement: HTMLDivElement, project: Project) {
+  private createEditButton(buttonsContainer: HTMLDivElement, project: Project) {
     const editButton = document.createElement('button') as HTMLButtonElement;
     editButton.classList.add('edit-btn');
     editButton.textContent = 'Edit';
 
-    editButton.addEventListener('click', () => this.editProject(projectElement, project, editButton));
-    projectElement.appendChild(editButton);
+    editButton.addEventListener('click', () => this.editProject(buttonsContainer.parentElement as HTMLDivElement, project));
+    buttonsContainer.appendChild(editButton);
   }
 
-  private editProject(projectElement: HTMLDivElement, project: Project, editButton: HTMLButtonElement) {
+  private editProject(projectElement: HTMLDivElement, project: Project) {
     const newProjectName = prompt('Edit project name:', project.name);
     const newProjectDescription = prompt('Edit project description:', project.description);
 
     if (newProjectName && newProjectName.trim() && newProjectDescription && newProjectDescription.trim()) {
-      projectElement.textContent = `${newProjectName.trim()}: ${newProjectDescription.trim()}`;
-      projectElement.appendChild(editButton);
-      this.createDeleteButton(projectElement, { ...project, name: newProjectName.trim(), description: newProjectDescription.trim() });
+      // Aktualizacja elementu DOM z osobnymi liniami dla każdej właściwości
+      projectElement.innerHTML = `
+        <strong>Name:</strong> ${newProjectName.trim()}<br/>
+        <strong>Description:</strong> ${newProjectDescription.trim()}
+      `;
+
+      // Ponownie utworzenie kontenera przycisków i dodanie go do projektu
+      const buttonsContainer = document.createElement('div') as HTMLDivElement;
+      buttonsContainer.classList.add('buttons-container');
+      this.createEditButton(buttonsContainer, project);
+      this.createDeleteButton(buttonsContainer, project);
+      this.createDetailsButton(buttonsContainer, project);
+
+      projectElement.appendChild(buttonsContainer);
 
       const existingProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
       const projectIndex = existingProjects.findIndex(p => p.id === project.id);

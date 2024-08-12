@@ -5,7 +5,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <div id='projects-container'></div>
     <div id='project-details' style='display: none;'>
-      <h2>Project Details</h2>
+      <h2 id="header" >Project Details</h2>
       <div id='stories-container'></div>
       <input placeholder='Story Name' id='new-story-name' />
       <input placeholder='Story Description' id='new-story-description' />

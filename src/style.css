@@ -30,8 +30,7 @@ html {
   /* Dodatkowa przestrzeń nad przyciskami */
 }
 
-
-#new-project-btn {
+*/ #new-project-btn {
   /* background-color: #007BFF; */
   /* color: white; */
   border: none;
@@ -54,11 +53,10 @@ html {
 .project {
   border: 2px solid rgb(93, 93, 93);
   border-radius: 10px;
-  width: 300px;
   text-align: center;
   margin-top: 10px;
   padding: 10px;
-  background-color: #333;
+  /* background-color: #333; */
   color: #fff;
 }
 
@@ -66,4 +64,32 @@ html {
   border: 1px solid whitesmoke;
   border-radius: 8px;
   padding: 10px;
+}
+
+.project {
+  border: 1px solid whitesmoke;
+  border-radius: 8px;
+  padding: 10px;
+  /* justify-content: left; */
+  text-align: left;
+}
+
+#projects-container {
+  border: 1px solid whitesmoke;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: auto;
+  width: 1000px
+}
+
+#project-details {
+  border: 1px solid whitesmoke;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: auto;
+  width: 1000px;
+}
+
+#header {
+  text-align: center;
 }
