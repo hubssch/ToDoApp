@@ -44,10 +44,23 @@ export class StoryCRUD {
   private createStoryElement(story: Story): HTMLDivElement {
     const storyElement = document.createElement('div') as HTMLDivElement;
     storyElement.classList.add('story');
-    storyElement.textContent = `${story.name}: ${story.description} (Priority: ${story.priority}, Status: ${story.status}, Owner: ${story.owner})`;
 
-    this.createEditButton(storyElement, story);
-    this.createDeleteButton(storyElement, story);
+    // Tworzenie divu na informacje o historii
+    const storyInfo = document.createElement('div') as HTMLDivElement;
+    storyInfo.classList.add('story-info');
+    storyInfo.textContent = `${story.name}: ${story.description} (Priority: ${story.priority}, Status: ${story.status}, Owner: ${story.owner})`;
+
+    // Tworzenie divu na przyciski
+    const storyActions = document.createElement('div') as HTMLDivElement;
+    storyActions.classList.add('story-actions');
+
+    // Tworzenie przycisków i dodanie ich do divu na przyciski
+    this.createEditButton(storyActions, story);
+    this.createDeleteButton(storyActions, story);
+
+    // Dodanie divów do głównego elementu
+    storyElement.appendChild(storyInfo);
+    storyElement.appendChild(storyActions);
 
     return storyElement;
   }
@@ -61,22 +74,22 @@ export class StoryCRUD {
     console.log(`Story deleted: ${storyId}`);
   }
 
-  private createDeleteButton(storyElement: HTMLDivElement, story: Story) {
+  private createDeleteButton(storyActions: HTMLDivElement, story: Story) {
     const deleteButton = document.createElement('button') as HTMLButtonElement;
     deleteButton.classList.add('delete-btn');
     deleteButton.textContent = 'Delete';
 
-    deleteButton.addEventListener('click', () => this.deleteStory(storyElement, story.id));
-    storyElement.appendChild(deleteButton);
+    deleteButton.addEventListener('click', () => this.deleteStory(storyActions.parentElement as HTMLDivElement, story.id));
+    storyActions.appendChild(deleteButton);
   }
 
-  private createEditButton(storyElement: HTMLDivElement, story: Story) {
+  private createEditButton(storyActions: HTMLDivElement, story: Story) {
     const editButton = document.createElement('button') as HTMLButtonElement;
     editButton.classList.add('edit-btn');
     editButton.textContent = 'Edit';
 
-    editButton.addEventListener('click', () => this.editStory(storyElement, story, editButton));
-    storyElement.appendChild(editButton);
+    editButton.addEventListener('click', () => this.editStory(storyActions.parentElement as HTMLDivElement, story, editButton));
+    storyActions.appendChild(editButton);
   }
 
   private editStory(storyElement: HTMLDivElement, story: Story, editButton: HTMLButtonElement) {
@@ -91,9 +104,8 @@ export class StoryCRUD {
       newStoryStatus && ['To do', 'Doing', 'Done'].includes(newStoryStatus) &&
       newStoryOwner && newStoryOwner.trim()) {
 
-      storyElement.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus}, Owner: ${newStoryOwner})`;
-      storyElement.appendChild(editButton);
-      this.createDeleteButton(storyElement, { ...story, name: newStoryName.trim(), description: newStoryDescription.trim(), priority: newStoryPriority as 'Low' | 'Medium' | 'High', status: newStoryStatus as 'To do' | 'Doing' | 'Done', owner: newStoryOwner.trim() });
+      const storyInfo = storyElement.querySelector('.story-info') as HTMLDivElement;
+      storyInfo.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus}, Owner: ${newStoryOwner})`;
 
       const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
       const storyIndex = existingStories.findIndex(s => s.id === story.id);

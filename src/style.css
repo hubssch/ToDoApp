@@ -13,7 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -25,7 +26,8 @@ body, html {
   justify-content: flex-end;
   align-items: center;
   min-height: 100vh;
-  padding-bottom: 20px; /* Dodatkowa przestrzeń nad przyciskami */
+  padding-bottom: 20px;
+  /* Dodatkowa przestrzeń nad przyciskami */
 }
 
 
