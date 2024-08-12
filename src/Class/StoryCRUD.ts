@@ -48,7 +48,13 @@ export class StoryCRUD {
     // Tworzenie divu na informacje o historii
     const storyInfo = document.createElement('div') as HTMLDivElement;
     storyInfo.classList.add('story-info');
-    storyInfo.textContent = `${story.name}: ${story.description} (Priority: ${story.priority}, Status: ${story.status}, Owner: ${story.owner})`;
+    storyInfo.innerHTML = `
+      <strong>Name:</strong> ${story.name}<br/>
+      <strong>Description:</strong> ${story.description}<br/>
+      <strong>Priority:</strong> ${story.priority}<br/>
+      <strong>Status:</strong> ${story.status}<br/>
+      <strong>Owner:</strong> ${story.owner}
+    `;
 
     // Tworzenie divu na przyciski
     const storyActions = document.createElement('div') as HTMLDivElement;
@@ -88,11 +94,11 @@ export class StoryCRUD {
     editButton.classList.add('edit-btn');
     editButton.textContent = 'Edit';
 
-    editButton.addEventListener('click', () => this.editStory(storyActions.parentElement as HTMLDivElement, story, editButton));
+    editButton.addEventListener('click', () => this.editStory(storyActions.parentElement as HTMLDivElement, story));
     storyActions.appendChild(editButton);
   }
 
-  private editStory(storyElement: HTMLDivElement, story: Story, editButton: HTMLButtonElement) {
+  private editStory(storyElement: HTMLDivElement, story: Story) {
     const newStoryName = prompt('Edit story name:', story.name);
     const newStoryDescription = prompt('Edit story description:', story.description);
     const newStoryPriority = prompt('Edit story priority (Low, Medium, High):', story.priority);
@@ -105,7 +111,13 @@ export class StoryCRUD {
       newStoryOwner && newStoryOwner.trim()) {
 
       const storyInfo = storyElement.querySelector('.story-info') as HTMLDivElement;
-      storyInfo.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus}, Owner: ${newStoryOwner})`;
+      storyInfo.innerHTML = `
+        <strong>Name:</strong> ${newStoryName.trim()}<br/>
+        <strong>Description:</strong> ${newStoryDescription.trim()}<br/>
+        <strong>Priority:</strong> ${newStoryPriority}<br/>
+        <strong>Status:</strong> ${newStoryStatus}<br/>
+        <strong>Owner:</strong> ${newStoryOwner.trim()}
+      `;
 
       const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
       const storyIndex = existingStories.findIndex(s => s.id === story.id);
