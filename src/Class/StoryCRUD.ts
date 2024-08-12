@@ -1,37 +1,38 @@
-// Class/StoryCRUD.ts
-
-import { Project } from './ProjectCRUD';
-
-interface Story {
+export interface Story {
   id: string;
   name: string;
   description: string;
   priority: 'Low' | 'Medium' | 'High';
-  project: Project;
-  createDate: string;
   status: 'To do' | 'Doing' | 'Done';
   owner: string;
+  project: {
+    id: string;
+    name: string;
+    description: string;
+  };
+  createDate: string;
 }
 
 export class StoryCRUD {
-  private storiesContainer: HTMLDivElement | null;
+  private storiesContainer: HTMLDivElement;
 
   constructor(storiesContainerId: string) {
-    this.storiesContainer = document.querySelector<HTMLDivElement>(`#${storiesContainerId}`);
+    this.storiesContainer = document.querySelector<HTMLDivElement>(`#${storiesContainerId}`)!;
   }
 
   loadStories(projectId: string) {
     const stories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
-    const filteredStories = stories.filter(story => story.project.id === projectId);
-    filteredStories.forEach(story => {
+    const projectStories = stories.filter(story => story.project.id === projectId);
+
+    projectStories.forEach(story => {
       const storyElement = this.createStoryElement(story);
-      this.storiesContainer?.appendChild(storyElement);
+      this.storiesContainer.appendChild(storyElement);
     });
   }
 
   addNewStory(story: Story) {
     const storyElement = this.createStoryElement(story);
-    this.storiesContainer?.appendChild(storyElement);
+    this.storiesContainer.appendChild(storyElement);
 
     const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
     existingStories.push(story);
@@ -43,7 +44,7 @@ export class StoryCRUD {
   private createStoryElement(story: Story): HTMLDivElement {
     const storyElement = document.createElement('div') as HTMLDivElement;
     storyElement.classList.add('story');
-    storyElement.textContent = `${story.name}: ${story.description} (Priority: ${story.priority}, Status: ${story.status})`;
+    storyElement.textContent = `${story.name}: ${story.description} (Priority: ${story.priority}, Status: ${story.status}, Owner: ${story.owner})`;
 
     this.createEditButton(storyElement, story);
     this.createDeleteButton(storyElement, story);
@@ -83,14 +84,16 @@ export class StoryCRUD {
     const newStoryDescription = prompt('Edit story description:', story.description);
     const newStoryPriority = prompt('Edit story priority (Low, Medium, High):', story.priority);
     const newStoryStatus = prompt('Edit story status (To do, Doing, Done):', story.status);
+    const newStoryOwner = prompt('Edit story owner:', story.owner);
 
     if (newStoryName && newStoryName.trim() && newStoryDescription && newStoryDescription.trim() &&
       newStoryPriority && ['Low', 'Medium', 'High'].includes(newStoryPriority) &&
-      newStoryStatus && ['To do', 'Doing', 'Done'].includes(newStoryStatus)) {
-        
-      storyElement.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus})`;
+      newStoryStatus && ['To do', 'Doing', 'Done'].includes(newStoryStatus) &&
+      newStoryOwner && newStoryOwner.trim()) {
+
+      storyElement.textContent = `${newStoryName.trim()}: ${newStoryDescription.trim()} (Priority: ${newStoryPriority}, Status: ${newStoryStatus}, Owner: ${newStoryOwner})`;
       storyElement.appendChild(editButton);
-      this.createDeleteButton(storyElement, { ...story, name: newStoryName.trim(), description: newStoryDescription.trim(), priority: newStoryPriority as 'Low' | 'Medium' | 'High', status: newStoryStatus as 'To do' | 'Doing' | 'Done' });
+      this.createDeleteButton(storyElement, { ...story, name: newStoryName.trim(), description: newStoryDescription.trim(), priority: newStoryPriority as 'Low' | 'Medium' | 'High', status: newStoryStatus as 'To do' | 'Doing' | 'Done', owner: newStoryOwner.trim() });
 
       const existingStories = JSON.parse(localStorage.getItem('stories') || '[]') as Story[];
       const storyIndex = existingStories.findIndex(s => s.id === story.id);
@@ -99,6 +102,7 @@ export class StoryCRUD {
         existingStories[storyIndex].description = newStoryDescription.trim();
         existingStories[storyIndex].priority = newStoryPriority as 'Low' | 'Medium' | 'High';
         existingStories[storyIndex].status = newStoryStatus as 'To do' | 'Doing' | 'Done';
+        existingStories[storyIndex].owner = newStoryOwner.trim();
         localStorage.setItem('stories', JSON.stringify(existingStories));
       }
 
