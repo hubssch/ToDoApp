@@ -29,9 +29,13 @@ export class StoryCRUD {
       filteredStories = projectStories.filter(story => story.status === statusFilter);
     }
 
+    this.displayStories(filteredStories);
+  }
+
+  displayStories(stories: Story[]) {
     this.storiesContainer.innerHTML = ''; // Wyczyść obecnie wyświetlane historie
 
-    filteredStories.forEach(story => {
+    stories.forEach(story => {
       const storyElement = this.createStoryElement(story);
       this.storiesContainer.appendChild(storyElement);
     });

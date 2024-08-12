@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const projectsContainerId = 'projects-container';
   const storiesContainerId = 'stories-container';
   const filterStoryStatus = document.querySelector<HTMLSelectElement>('#filter-story-status');
-
   const projectCRUD = new ProjectCRUD(projectsContainerId);
   const storyCRUD = new StoryCRUD(storiesContainerId);
 
